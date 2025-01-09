@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: AWS Control Tower Account Factory Template (DO NOT DELETE)
+Parameters:
+  AccountName:
+    Description: "Account name, the new managed Account will be created with this name."
+    Type: String
+    AllowedPattern : ".+"
+  AccountEmail:
+    Description: "Account email, must be unique for each AWS Account."
+    Type: String
+    AllowedPattern : "[^\\s@]+@[^\\s@]+\\.[^\\s@]+"
+  SSOUserFirstName:
+    Description:  "SSO user first name."
+    Type: String
+    AllowedPattern : ".+"
+  SSOUserLastName:
+    Description:  "SSO user last name."
+    Type: String
+    AllowedPattern : ".+"
+  SSOUserEmail:
+    Description: "SSO user email. A new SSO user will be created for this email, if it does not exist. This SSO user will be associated with the new managed Account."
+    Type: String
+    AllowedPattern : "[^\\s@]+@[^\\s@]+\\.[^\\s@]+"
+  ManagedOrganizationalUnit:
+    Description: "Your account will be added to this registered organizational unit. The list includes top-level and nested OUs registered with AWS Control Tower. You can search for an OU by name or ID. To manage these OUs, go to AWS Control Tower."
+    Type: String
+    AllowedValues:
+      - Sandbox (ou-qaok-zpp1cwpv)
+      - Account Factory (ou-qaok-q6necy8k) 
+Resources:
+  WaitCondition:
+    Type: AWS::CloudFormation::WaitCondition
+    Properties:
+      Handle: WaitHandle
+      Timeout: 1
+  WaitHandle:
+    Type: AWS::CloudFormation::WaitConditionHandle

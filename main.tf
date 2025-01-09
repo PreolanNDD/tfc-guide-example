@@ -1,31 +1,42 @@
-# Copyright (c) HashiCorp, Inc.
-# SPDX-License-Identifier: MPL-2.0
-
-provider "aws" {
-  region = var.region
+resource "aws_s3_bucket" "template_bucket" {
+  bucket = "account-creation-bucket"
 }
 
-data "aws_ami" "ubuntu" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["099720109477"] # Canonical
+resource "aws_s3_object" "cf_template" {
+  bucket = aws_s3_bucket.template_bucket.id
+  key    = "cloudformation/account-creation-template.yaml"
+  source = "account-creation-template.yaml"
+  acl    = "private"
 }
 
-resource "aws_instance" "ubuntu" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = var.instance_type
+resource "aws_servicecatalog_product" "custom_product" {
+  name          = "Account Creation Product"
+  owner         = "YourCompanyName"
+  type  = "CLOUD_FORMATION_TEMPLATE"
 
-  tags = {
-    Name = var.instance_name
+  provisioning_artifact_parameters {
+    name                   = "v1"
+    description            = "Template to create AWS accounts"
+    template_url           = aws_s3_object.cf_template.website_url
   }
+  distributor   = "DD"
+  description   = "Product for creating AWS accounts"
 }
+
+resource "aws_servicecatalog_portfolio" "custom_portfolio" {
+  name          = "Custom Account Portfolio"
+  description   = "Portfolio for provisioning AWS accounts"
+  provider_name = "DD"
+}
+
+resource "aws_servicecatalog_portfolio_product_association" "example" {
+  portfolio_id = aws_servicecatalog_portfolio.custom_portfolio.id
+  product_id   = aws_servicecatalog_product.custom_product.id
+}
+
+resource "aws_servicecatalog_portfolio_association" "example" {
+  portfolio_id = aws_servicecatalog_portfolio.example.id
+  principal_arn = "arn:aws:iam::194722434270:user/Preolan"
+}
+
+
