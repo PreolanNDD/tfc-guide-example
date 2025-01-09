@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "account_creation_bucket" {
-  bucket = "account-creation-bucket"
+  bucket = "account-creation-bucket1"
 }
 
 resource "aws_s3_bucket_ownership_controls" "example" {
