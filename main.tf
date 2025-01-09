@@ -1,9 +1,16 @@
-resource "aws_s3_bucket" "template_bucket" {
+resource "aws_s3_bucket" "account_creation_bucket" {
   bucket = "account-creation-bucket"
 }
 
+resource "aws_s3_bucket_acl" "example" {
+  depends_on = [aws_s3_bucket_ownership_controls.example]
+
+  bucket = aws_s3_bucket.account_creation_bucket.id
+  acl    = "private"
+}
+
 resource "aws_s3_object" "cf_template" {
-  bucket = aws_s3_bucket.template_bucket.id
+  bucket = aws_s3_bucket.account_creation_bucket.id
   key    = "cloudformation/account-creation-template.yaml"
   source = "account-creation-template.yaml"
   acl    = "private"
@@ -17,7 +24,7 @@ resource "aws_servicecatalog_product" "custom_product" {
   provisioning_artifact_parameters {
     name                   = "v1"
     description            = "Template to create AWS accounts"
-    template_url           = aws_s3_object.cf_template.website_url
+    template_url           = "https://${aws_s3_bucket.account_creation_bucket.bucket}.s3.${var.region}.amazonaws.com/${aws_s3_bucket_object.cf_template.key}"
   }
   distributor   = "DD"
   description   = "Product for creating AWS accounts"
@@ -29,12 +36,12 @@ resource "aws_servicecatalog_portfolio" "custom_portfolio" {
   provider_name = "DD"
 }
 
-resource "aws_servicecatalog_portfolio_product_association" "example" {
+resource "aws_servicecatalog_product_portfolio_association" "example" {
   portfolio_id = aws_servicecatalog_portfolio.custom_portfolio.id
   product_id   = aws_servicecatalog_product.custom_product.id
 }
 
-resource "aws_servicecatalog_portfolio_association" "example" {
+resource "aws_servicecatalog_principal_portfolio_association" "example" {
   portfolio_id = aws_servicecatalog_portfolio.example.id
   principal_arn = "arn:aws:iam::194722434270:user/Preolan"
 }
