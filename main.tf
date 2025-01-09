@@ -32,7 +32,7 @@ resource "aws_servicecatalog_product" "custom_product" {
     name                   = "v1"
     description            = "Template to create AWS accounts"
     type                   = "CLOUD_FORMATION_TEMPLATE"
-    template_url           = "https://s3.amazonaws.com/${aws_s3_bucket.account_creation_bucket.bucket}/cloudformation/${aws_s3_object.cf_template.key}"
+    template_url           = "https://s3.amazonaws.com/account-creation-bucket1/cloudformation/account-creation-template.yaml"
   }
   distributor   = "DD"
   description   = "Product for creating AWS accounts"
