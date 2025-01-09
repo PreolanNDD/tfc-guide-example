@@ -26,7 +26,7 @@ resource "aws_s3_object" "cf_template" {
 resource "aws_servicecatalog_product" "custom_product" {
   name          = "Account Creation Product"
   owner         = "YourCompanyName"
-  type  = "CLOUD_FORMATION_TEMPLATE"
+  type  = "ACCOUNT_FACTORY"
 
   provisioning_artifact_parameters {
     name                   = "v1"
