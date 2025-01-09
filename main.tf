@@ -36,6 +36,12 @@ resource "aws_servicecatalog_product" "custom_product" {
   }
   distributor   = "DD"
   description   = "Product for creating AWS accounts"
+
+  lifecycle {
+    # Ensure Terraform detects changes to the CloudFormation template
+    # and updates the product by forcing a new deployment
+    create_before_destroy = true
+  }
 }
 
 resource "aws_servicecatalog_portfolio" "custom_portfolio" {
