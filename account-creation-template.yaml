@@ -26,6 +26,7 @@ Parameters:
     Type: String
     AllowedValues:
       - Sandbox (ou-qaok-zpp1cwpv)
+      - Account Factory
 Resources:
   WaitCondition:
     Type: AWS::CloudFormation::WaitCondition
