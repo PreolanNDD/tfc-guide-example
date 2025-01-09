@@ -31,7 +31,7 @@ resource "aws_servicecatalog_product" "custom_product" {
   provisioning_artifact_parameters {
     name                   = "v1"
     description            = "Template to create AWS accounts"
-    type        = "ACCOUNT_FACTORY"
+    type                   = "CLOUD_FORMATION_TEMPLATE"
     template_url           = "https://${aws_s3_bucket.account_creation_bucket.bucket}.s3.${var.region}.amazonaws.com/${aws_s3_object.cf_template.key}"
   }
   distributor   = "DD"
